@@ -1218,6 +1218,7 @@ function Library:MakeDraggable(UI: GuiObject, DragFrame: GuiObject, IgnoreToggle
     local FramePos
     local Dragging = false
     local Changed
+
     DragFrame.InputBegan:Connect(function(Input: InputObject)
         if not IsClickInput(Input) or IsMainWindow and Library.CantDragForced then
             return
@@ -1239,6 +1240,7 @@ function Library:MakeDraggable(UI: GuiObject, DragFrame: GuiObject, IgnoreToggle
             end
         end)
     end)
+
     Library:GiveSignal(UserInputService.InputChanged:Connect(function(Input: InputObject)
         if
             (not IgnoreToggled and not Library.Toggled)
@@ -1250,14 +1252,23 @@ function Library:MakeDraggable(UI: GuiObject, DragFrame: GuiObject, IgnoreToggle
                 Changed:Disconnect()
                 Changed = nil
             end
-
             return
         end
 
         if Dragging and IsHoverInput(Input) then
             local Delta = Input.Position - StartPos
-            UI.Position =
-                UDim2.new(FramePos.X.Scale, FramePos.X.Offset + Delta.X, FramePos.Y.Scale, FramePos.Y.Offset + Delta.Y)
+            local goal = UDim2.new(
+                FramePos.X.Scale,
+                FramePos.X.Offset + Delta.X,
+                FramePos.Y.Scale,
+                FramePos.Y.Offset + Delta.Y
+            )
+
+            TweenService:Create(
+                UI,
+                TweenInfo.new(0.15, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
+                { Position = goal }
+            ):Play()
         end
     end))
 end
