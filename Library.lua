@@ -1273,43 +1273,6 @@ function Library:MakeDraggable(UI: GuiObject, DragFrame: GuiObject, IgnoreToggle
     end))
 end
 
-function Library:ApplyIconGlow(Icon: GuiObject, Color: Color3?)
-    local Glow = Instance.new("ImageLabel")
-    Glow.Name = "Glow"
-    Glow.Size = UDim2.fromOffset(Icon.AbsoluteSize.X + 20, Icon.AbsoluteSize.Y + 20)
-    Glow.AnchorPoint = Vector2.new(0.5, 0.5)
-    Glow.Position = UDim2.new(0.5, 0, 0.5, 0)
-    Glow.BackgroundTransparency = 1
-    Glow.Image = "rbxassetid://5028857084" -- soft circular glow asset
-    Glow.ImageColor3 = Color or Library.Scheme.AccentColor
-    Glow.ImageTransparency = 0.6
-    Glow.ZIndex = Icon.ZIndex - 1
-    Glow.Parent = Icon
-
-    -- update when icon resizes
-    Icon:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-        Glow.Size = UDim2.fromOffset(Icon.AbsoluteSize.X + 20, Icon.AbsoluteSize.Y + 20)
-    end)
-
-    -- hover effects if it's a button
-    if Icon:IsA("ImageButton") then
-        Icon.MouseEnter:Connect(function()
-            TweenService:Create(
-                Glow,
-                TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-                { ImageTransparency = 0.3, Size = UDim2.fromOffset(Icon.AbsoluteSize.X + 30, Icon.AbsoluteSize.Y + 30) }
-            ):Play()
-        end)
-        Icon.MouseLeave:Connect(function()
-            TweenService:Create(
-                Glow,
-                TweenInfo.new(0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out),
-                { ImageTransparency = 0.6, Size = UDim2.fromOffset(Icon.AbsoluteSize.X + 20, Icon.AbsoluteSize.Y + 20) }
-            ):Play()
-        end)
-    end
-end
-
 function Library:MakeResizable(UI: GuiObject, DragFrame: GuiObject, Callback: () -> ()?)
     local StartPos
     local FrameSize
@@ -1965,8 +1928,6 @@ do
                 Size = UDim2.new(1, -4, 1, -4),
                 Parent = Checkbox,
             })
-
-            Library:ApplyIconGlow(CheckImage, Library.Scheme.AccentColor)
 
             function KeybindsToggle:Display(State)
                 Label.TextTransparency = State and 0 or 0.5
@@ -3156,8 +3117,6 @@ do
             Parent = Checkbox,
         })
 
-        Library:ApplyIconGlow(CheckImage, Library.Scheme.AccentColor)
-
         function Toggle:UpdateColors()
             Toggle:Display()
         end
@@ -3985,8 +3944,6 @@ do
             Size = UDim2.fromOffset(16, 16),
             Parent = Display,
         })
-
-        Library:ApplyIconGlow(ArrowImage, Library.Scheme.AccentColor)
 
         local SearchBox
         if Info.Searchable then
